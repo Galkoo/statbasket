@@ -1,22 +1,23 @@
 <?php
-session_start();
+require_once "auth_sodnik.php";
 require_once "povezava.php";
 
-if (!isset($_SESSION["prijavljen"])) {
-    header("Location: prijava.php");
-    exit();
-}
-
 $msg = "";
-$igralci = mysqli_query($conn, "SELECT i.i_id, i.Ime, i.Priimek, e.Ime_ekipe 
-                                FROM Igralci i 
-                                INNER JOIN Ekipe e ON i.e_id = e.e_id
-                                ORDER BY e.Ime_ekipe, i.Priimek");
-$tekme = mysqli_query($conn, "SELECT t.t_id, t.Datum, e1.Ime_ekipe AS dom, e2.Ime_ekipe AS gos
-                              FROM Tekme t
-                              INNER JOIN Ekipe e1 ON t.Ekipa_Dom = e1.e_id
-                              INNER JOIN Ekipe e2 ON t.Ekipa_Gos = e2.e_id
-                              ORDER BY t.Datum DESC");
+
+$igralci = mysqli_query($conn, "
+    SELECT i.i_id, i.Ime, i.Priimek, e.Ime_ekipe
+    FROM Igralci i
+    INNER JOIN Ekipe e ON i.e_id = e.e_id
+    ORDER BY e.Ime_ekipe, i.Priimek
+");
+
+$tekme = mysqli_query($conn, "
+    SELECT t.t_id, t.Datum, e1.Ime_ekipe AS dom, e2.Ime_ekipe AS gos
+    FROM Tekme t
+    INNER JOIN Ekipe e1 ON t.Ekipa_Dom = e1.e_id
+    INNER JOIN Ekipe e2 ON t.Ekipa_Gos = e2.e_id
+    ORDER BY t.Datum DESC
+");
 
 if (isset($_POST["shrani"])) {
     $i_id = (int)($_POST["igralec"] ?? 0);
@@ -29,9 +30,11 @@ if (isset($_POST["shrani"])) {
     $blokade = (int)($_POST["blokade"] ?? 0);
     $osebne = (int)($_POST["osebne"] ?? 0);
 
-    $query = "INSERT INTO Statistika (i_id, t_id, Tocke, Skoki, Podaje, Met_za_tri, Prosti_met, Blokade, Osebne_Napake)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($conn, $query);
+    $stmt = mysqli_prepare(
+        $conn,
+        "INSERT INTO Statistika (i_id, t_id, Tocke, Skoki, Podaje, Met_za_tri, Prosti_met, Blokade, Osebne_Napake)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    );
 
     if ($stmt) {
         mysqli_stmt_bind_param($stmt, "iiiiiiiii", $i_id, $t_id, $tocke, $skoki, $podaje, $tri, $prosti, $blokade, $osebne);
@@ -50,13 +53,14 @@ if (isset($_POST["shrani"])) {
 <html lang="sl">
 <head>
     <meta charset="UTF-8">
-    <title>Vnos statistike</title>
+    <title>Dodaj statistiko</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <div class="container">
     <h1>Dodaj statistiko</h1>
-    <p class="subtitle">Vnesi statistiko igralca za določeno tekmo</p>
+    <p class="subtitle">Vnesi statistiko igralca za tekmo</p>
 
     <?php if ($msg): ?>
         <p class="notice"><?= htmlspecialchars($msg) ?></p>
@@ -108,9 +112,10 @@ if (isset($_POST["shrani"])) {
     </form>
 
     <div class="menu">
-        <a href="admin.php">Admin panel</a>
+        <a href="admin.php">Nazaj</a>
         <a href="index.php">Domov</a>
     </div>
 </div>
+
 </body>
 </html>
