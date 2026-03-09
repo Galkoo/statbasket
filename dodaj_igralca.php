@@ -1,73 +1,86 @@
 <?php
 session_start();
-require_once __DIR__ . '/povezava.php';
+require_once "povezava.php";
 
-if(!isset($_SESSION["prijavljen"])) {
+if (!isset($_SESSION["prijavljen"])) {
     header("Location: prijava.php");
     exit();
 }
 
-$msg="";
+$msg = "";
+$ekipe = mysqli_query($conn, "SELECT * FROM Ekipe ORDER BY Ime_ekipe ASC");
 
-if(isset($_POST["dodaj"])){
+if (isset($_POST["dodaj"])) {
+    $ime = trim($_POST["ime"] ?? "");
+    $priimek = trim($_POST["priimek"] ?? "");
+    $stevilka = (int)($_POST["stevilka"] ?? 0);
+    $ekipa = (int)($_POST["ekipa"] ?? 0);
 
-$ime=$_POST["ime"];
-$priimek=$_POST["priimek"];
-$stevilka=$_POST["stevilka"];
-$ekipa=$_POST["ekipa"];
+    if ($ime !== "" && $priimek !== "" && $stevilka > 0 && $ekipa > 0) {
+        $query = "INSERT INTO Igralci (Ime, Priimek, Stevilka, e_id) VALUES (?, ?, ?, ?)";
+        $stmt = mysqli_prepare($conn, $query);
 
-$query="INSERT INTO Igralci(Ime,Priimek,Stevilka,e_id)
-VALUES(?,?,?,?)";
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "ssii", $ime, $priimek, $stevilka, $ekipa);
 
-$stmt=mysqli_prepare($conn,$query);
-mysqli_stmt_bind_param($stmt,"ssii",$ime,$priimek,$stevilka,$ekipa);
-
-if(mysqli_stmt_execute($stmt)){
-$msg="Igralec dodan.";
+            if (mysqli_stmt_execute($stmt)) {
+                $msg = "Igralec uspešno dodan.";
+            } else {
+                $msg = "Napaka pri dodajanju igralca.";
+            }
+        } else {
+            $msg = "Napaka pri dodajanju igralca.";
+        }
+    } else {
+        $msg = "Izpolni vsa polja pravilno.";
+    }
 }
-
-}
-
-$ekipe=mysqli_query($conn,"SELECT * FROM Ekipe");
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="sl">
 <head>
-<meta charset="UTF-8">
-<title>Dodaj igralca</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Dodaj igralca</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
 <div class="container">
+    <h1>Dodaj igralca</h1>
+    <p class="subtitle">Dodaj novega igralca v izbrano ekipo</p>
 
-<h1>Dodaj igralca</h1>
+    <?php if ($msg): ?>
+        <p class="notice"><?= htmlspecialchars($msg) ?></p>
+    <?php endif; ?>
 
-<form method="POST">
+    <form method="POST">
+        <label for="ime">Ime</label>
+        <input type="text" id="ime" name="ime" required>
 
-<input type="text" name="ime" placeholder="Ime" required>
-<input type="text" name="priimek" placeholder="Priimek" required>
-<input type="number" name="stevilka" placeholder="Številka" required>
+        <label for="priimek">Priimek</label>
+        <input type="text" id="priimek" name="priimek" required>
 
-<select name="ekipa">
+        <label for="stevilka">Številka</label>
+        <input type="number" id="stevilka" name="stevilka" required>
 
-<?php
-while($e=mysqli_fetch_assoc($ekipe)){
-echo "<option value='".$e['e_id']."'>".htmlspecialchars($e['Ime_ekipe'])."</option>";
-}
-?>
+        <label for="ekipa">Ekipa</label>
+        <select id="ekipa" name="ekipa" required>
+            <option value="">Izberi ekipo</option>
+            <?php if ($ekipe): ?>
+                <?php while ($e = mysqli_fetch_assoc($ekipe)): ?>
+                    <option value="<?= (int)$e["e_id"] ?>">
+                        <?= htmlspecialchars($e["Ime_ekipe"]) ?>
+                    </option>
+                <?php endwhile; ?>
+            <?php endif; ?>
+        </select>
 
-</select>
+        <button type="submit" name="dodaj">Dodaj igralca</button>
+    </form>
 
-<button name="dodaj">Dodaj igralca</button>
-
-</form>
-
-<p><?= htmlspecialchars($msg) ?></p>
-
+    <div class="menu">
+        <a href="admin.php">Admin panel</a>
+        <a href="index.php">Domov</a>
+    </div>
 </div>
-
 </body>
 </html>
