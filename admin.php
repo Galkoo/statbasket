@@ -36,7 +36,7 @@ foreach ($queries as $key => $sql) {
 <head>
     <meta charset="UTF-8">
     <title>Admin panel</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -64,3 +64,4 @@ foreach ($queries as $key => $sql) {
 
 </body>
 </html>
+
