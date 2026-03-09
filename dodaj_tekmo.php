@@ -1,11 +1,6 @@
 <?php
-session_start();
+require_once "auth_sodnik.php";
 require_once "povezava.php";
-
-if (!isset($_SESSION["prijavljen"])) {
-    header("Location: prijava.php");
-    exit();
-}
 
 $msg = "";
 $ekipe1 = mysqli_query($conn, "SELECT * FROM Ekipe ORDER BY Ime_ekipe ASC");
@@ -19,8 +14,10 @@ if (isset($_POST["dodaj"])) {
     $rezGos = (int)($_POST["rez_gos"] ?? 0);
 
     if ($dom > 0 && $gos > 0 && $dom !== $gos && $datum !== "") {
-        $query = "INSERT INTO Tekme (Ekipa_Dom, Ekipa_Gos, Datum, Rezultat_Dom, Rezultat_Gos) VALUES (?, ?, ?, ?, ?)";
-        $stmt = mysqli_prepare($conn, $query);
+        $stmt = mysqli_prepare(
+            $conn,
+            "INSERT INTO Tekme (Ekipa_Dom, Ekipa_Gos, Datum, Rezultat_Dom, Rezultat_Gos) VALUES (?, ?, ?, ?, ?)"
+        );
 
         if ($stmt) {
             mysqli_stmt_bind_param($stmt, "iisii", $dom, $gos, $datum, $rezDom, $rezGos);
@@ -30,8 +27,6 @@ if (isset($_POST["dodaj"])) {
             } else {
                 $msg = "Napaka pri dodajanju tekme.";
             }
-        } else {
-            $msg = "Napaka pri dodajanju tekme.";
         }
     } else {
         $msg = "Preveri ekipe in datum.";
@@ -43,12 +38,13 @@ if (isset($_POST["dodaj"])) {
 <head>
     <meta charset="UTF-8">
     <title>Dodaj tekmo</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+
 <div class="container">
     <h1>Dodaj tekmo</h1>
-    <p class="subtitle">Vnesi novo košarkarsko tekmo</p>
+    <p class="subtitle">Vnesi novo tekmo</p>
 
     <?php if ($msg): ?>
         <p class="notice"><?= htmlspecialchars($msg) ?></p>
@@ -84,9 +80,10 @@ if (isset($_POST["dodaj"])) {
     </form>
 
     <div class="menu">
-        <a href="admin.php">Admin panel</a>
+        <a href="admin.php">Nazaj</a>
         <a href="index.php">Domov</a>
     </div>
 </div>
+
 </body>
 </html>
