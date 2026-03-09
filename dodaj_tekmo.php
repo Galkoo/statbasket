@@ -38,7 +38,7 @@ if (isset($_POST["dodaj"])) {
 <head>
     <meta charset="UTF-8">
     <title>Dodaj tekmo</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -87,3 +87,4 @@ if (isset($_POST["dodaj"])) {
 
 </body>
 </html>
+
