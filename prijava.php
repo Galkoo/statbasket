@@ -4,13 +4,11 @@ require_once "povezava.php";
 
 $error = "";
 
-if (isset($_POST["prijava"])) {
+if (isset($_POST["login"])) {
     $mail = trim($_POST["mail"] ?? "");
     $geslo = $_POST["geslo"] ?? "";
 
-    $query = "SELECT * FROM Uporabnik WHERE Mail = ?";
-    $stmt = mysqli_prepare($conn, $query);
-
+    $stmt = mysqli_prepare($conn, "SELECT * FROM Uporabnik WHERE Mail = ?");
     if ($stmt) {
         mysqli_stmt_bind_param($stmt, "s", $mail);
         mysqli_stmt_execute($stmt);
@@ -44,9 +42,10 @@ if (isset($_POST["prijava"])) {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <div class="container">
     <h1>Prijava</h1>
-    <p class="subtitle">Prijavi se v StatBasket račun</p>
+    <p class="subtitle">Prijavi se v svoj račun</p>
 
     <?php if ($error): ?>
         <p class="notice"><?= htmlspecialchars($error) ?></p>
@@ -59,7 +58,7 @@ if (isset($_POST["prijava"])) {
         <label for="geslo">Geslo</label>
         <input type="password" id="geslo" name="geslo" required>
 
-        <button type="submit" name="prijava">Prijava</button>
+        <button type="submit" name="login">Prijava</button>
     </form>
 
     <div class="menu">
@@ -67,5 +66,6 @@ if (isset($_POST["prijava"])) {
         <a href="index.php">Domov</a>
     </div>
 </div>
+
 </body>
 </html>
