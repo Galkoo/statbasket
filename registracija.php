@@ -4,13 +4,15 @@ require_once "povezava.php";
 
 $msg = "";
 
-if (isset($_POST["registracija"])) {
+if (isset($_POST["reg"])) {
     $ime = trim($_POST["ime"] ?? "");
     $priimek = trim($_POST["priimek"] ?? "");
     $mail = trim($_POST["mail"] ?? "");
     $gesloRaw = $_POST["geslo"] ?? "";
 
-    if ($ime !== "" && $priimek !== "" && $mail !== "" && $gesloRaw !== "") {
+    if ($ime === "" || $priimek === "" || $mail === "" || $gesloRaw === "") {
+        $msg = "Izpolni vsa polja.";
+    } else {
         $check = mysqli_prepare($conn, "SELECT u_id FROM Uporabnik WHERE Mail = ?");
         mysqli_stmt_bind_param($check, "s", $mail);
         mysqli_stmt_execute($check);
@@ -21,8 +23,10 @@ if (isset($_POST["registracija"])) {
         } else {
             $geslo = password_hash($gesloRaw, PASSWORD_DEFAULT);
 
-            $query = "INSERT INTO Uporabnik (Ime, Priimek, Mail, Geslo, Vloga) VALUES (?, ?, ?, ?, 'uporabnik')";
-            $stmt = mysqli_prepare($conn, $query);
+            $stmt = mysqli_prepare(
+                $conn,
+                "INSERT INTO Uporabnik (Ime, Priimek, Mail, Geslo, Vloga) VALUES (?, ?, ?, ?, 'uporabnik')"
+            );
 
             if ($stmt) {
                 mysqli_stmt_bind_param($stmt, "ssss", $ime, $priimek, $mail, $geslo);
@@ -36,8 +40,6 @@ if (isset($_POST["registracija"])) {
                 $msg = "Napaka pri registraciji.";
             }
         }
-    } else {
-        $msg = "Izpolni vsa polja.";
     }
 }
 ?>
@@ -49,9 +51,10 @@ if (isset($_POST["registracija"])) {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <div class="container">
     <h1>Registracija</h1>
-    <p class="subtitle">Ustvari nov račun za uporabo aplikacije</p>
+    <p class="subtitle">Ustvari nov račun</p>
 
     <?php if ($msg): ?>
         <p class="notice"><?= htmlspecialchars($msg) ?></p>
@@ -70,7 +73,7 @@ if (isset($_POST["registracija"])) {
         <label for="geslo">Geslo</label>
         <input type="password" id="geslo" name="geslo" required>
 
-        <button type="submit" name="registracija">Registriraj se</button>
+        <button type="submit" name="reg">Registracija</button>
     </form>
 
     <div class="menu">
@@ -78,5 +81,6 @@ if (isset($_POST["registracija"])) {
         <a href="index.php">Domov</a>
     </div>
 </div>
+
 </body>
 </html>
