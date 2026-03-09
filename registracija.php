@@ -1,63 +1,82 @@
 <?php
-require_once __DIR__ . '/povezava.php';
+session_start();
+require_once "povezava.php";
 
-$msg="";
+$msg = "";
 
-if(isset($_POST["registracija"])){
+if (isset($_POST["registracija"])) {
+    $ime = trim($_POST["ime"] ?? "");
+    $priimek = trim($_POST["priimek"] ?? "");
+    $mail = trim($_POST["mail"] ?? "");
+    $gesloRaw = $_POST["geslo"] ?? "";
 
-$ime=$_POST["ime"];
-$priimek=$_POST["priimek"];
-$mail=$_POST["mail"];
-$geslo=password_hash($_POST["geslo"],PASSWORD_DEFAULT);
+    if ($ime !== "" && $priimek !== "" && $mail !== "" && $gesloRaw !== "") {
+        $check = mysqli_prepare($conn, "SELECT u_id FROM Uporabnik WHERE Mail = ?");
+        mysqli_stmt_bind_param($check, "s", $mail);
+        mysqli_stmt_execute($check);
+        $existing = mysqli_stmt_get_result($check);
 
-$query="INSERT INTO Uporabnik(Ime,Priimek,Mail,Geslo)
-VALUES(?,?,?,?)";
+        if ($existing && mysqli_num_rows($existing) > 0) {
+            $msg = "Uporabnik s tem emailom že obstaja.";
+        } else {
+            $geslo = password_hash($gesloRaw, PASSWORD_DEFAULT);
 
-$stmt=mysqli_prepare($conn,$query);
+            $query = "INSERT INTO Uporabnik (Ime, Priimek, Mail, Geslo, Vloga) VALUES (?, ?, ?, ?, 'uporabnik')";
+            $stmt = mysqli_prepare($conn, $query);
 
-mysqli_stmt_bind_param($stmt,"ssss",$ime,$priimek,$mail,$geslo);
+            if ($stmt) {
+                mysqli_stmt_bind_param($stmt, "ssss", $ime, $priimek, $mail, $geslo);
 
-if(mysqli_stmt_execute($stmt)){
-
-$msg="Registracija uspešna.";
-
-}else{
-
-$msg="Napaka pri registraciji.";
-
-}
-
+                if (mysqli_stmt_execute($stmt)) {
+                    $msg = "Registracija uspešna. Zdaj se lahko prijaviš.";
+                } else {
+                    $msg = "Napaka pri registraciji.";
+                }
+            } else {
+                $msg = "Napaka pri registraciji.";
+            }
+        }
+    } else {
+        $msg = "Izpolni vsa polja.";
+    }
 }
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="sl">
 <head>
-<meta charset="UTF-8">
-<title>Registracija</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Registracija</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
 <div class="container">
+    <h1>Registracija</h1>
+    <p class="subtitle">Ustvari nov račun za uporabo aplikacije</p>
 
-<h1>Registracija</h1>
+    <?php if ($msg): ?>
+        <p class="notice"><?= htmlspecialchars($msg) ?></p>
+    <?php endif; ?>
 
-<form method="POST">
+    <form method="POST">
+        <label for="ime">Ime</label>
+        <input type="text" id="ime" name="ime" required>
 
-<input type="text" name="ime" placeholder="Ime" required>
-<input type="text" name="priimek" placeholder="Priimek" required>
-<input type="email" name="mail" placeholder="Email" required>
-<input type="password" name="geslo" placeholder="Geslo" required>
+        <label for="priimek">Priimek</label>
+        <input type="text" id="priimek" name="priimek" required>
 
-<button type="submit" name="registracija">Registracija</button>
+        <label for="mail">Email</label>
+        <input type="email" id="mail" name="mail" required>
 
-</form>
+        <label for="geslo">Geslo</label>
+        <input type="password" id="geslo" name="geslo" required>
 
-<p><?= htmlspecialchars($msg) ?></p>
+        <button type="submit" name="registracija">Registriraj se</button>
+    </form>
 
+    <div class="menu">
+        <a href="prijava.php">Prijava</a>
+        <a href="index.php">Domov</a>
+    </div>
 </div>
-
 </body>
 </html>
