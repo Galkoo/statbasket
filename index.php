@@ -8,7 +8,7 @@ require_once "povezava.php";
 <head>
 <meta charset="UTF-8">
 <title>StatBasket</title>
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -77,3 +77,4 @@ echo "Ni tekem.";
 
 </body>
 </html>
+
