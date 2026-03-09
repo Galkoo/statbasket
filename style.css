@@ -1,151 +1,64 @@
-body {
-  font-family: Arial, sans-serif;
-  background-color: lightgray;
-  margin: 0;
-  padding: 0;
-  color: black;
+body{
+font-family: Arial;
+background:#0f172a;
+color:white;
+margin:0;
+padding:0;
 }
 
-div {
-  max-width: 840px;
-  margin: 20px auto;
-  padding: 15px;
-  background-color: white;
-  border: 1px solid gray;
+.container{
+max-width:900px;
+margin:auto;
+padding:40px;
 }
 
-h1 {
-  text-align: center;
-  color: purple;
-  font-size: 36px;
+h1{
+font-size:40px;
+text-align:center;
 }
 
-h2 {
-  font-size: 22px;
-  border-bottom: 2px solid gray;
-  padding-bottom: 5px;
-  margin-top: 20px;
+.subtitle{
+text-align:center;
+color:#94a3b8;
+margin-bottom:30px;
 }
 
-h3 {
-  font-size: 18px;
-  background-color: lightgray;
-  padding: 8px;
-  margin-bottom: 10px;
-  text-align: center;
+.menu{
+text-align:center;
+margin-bottom:30px;
 }
 
-a {
-  display: inline-block;
-  margin: 5px 5px 5px 0;
-  padding: 8px 12px;
-  background-color: purple;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
+.menu a{
+display:inline-block;
+margin:5px;
+padding:12px 18px;
+background:#2563eb;
+color:white;
+text-decoration:none;
+border-radius:8px;
 }
 
-a:hover {
-  background-color: mediumorchid;
+.menu a:hover{
+background:#1e40af;
 }
 
-p {
-  text-align: center;
-  margin: 10px 0;
+input,select{
+width:100%;
+padding:10px;
+margin:8px 0;
+border-radius:6px;
+border:none;
 }
 
-form {
-  margin: 20px 0;
+button{
+background:#22c55e;
+border:none;
+padding:12px;
+color:white;
+border-radius:6px;
+cursor:pointer;
 }
 
-input,
-select {
-  width: 100%;
-  padding: 8px;
-  margin: 8px 0;
-  border: 1px solid gray;
-  border-radius: 4px;
-  box-sizing: border-box;
+button:hover{
+background:#16a34a;
 }
-
-input[type="submit"],
-button {
-  background-color: purple;
-  color: white;
-  border: none;
-  padding: 10px;
-  font-weight: bold;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-input[type="submit"]:hover,
-button:hover {
-  background-color: mediumorchid;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  background-color: white;
-  font-size: 14px;
-}
-
-table th,
-table td {
-  border: 1px solid gray;
-  padding: 8px;
-  text-align: center;
-}
-
-table th {
-  background-color: purple;
-  color: white;
-}
-
-@media (max-width: 600px) {
-  body {
-    font-size: 15px;
-    padding: 10px;
-  }
-
-  div {
-    width: 100%;
-    margin: 0;
-    padding: 10px;
-    border: none;
-    box-shadow: none;
-  }
-
-  h1 {
-    font-size: 28px;
-  }
-
-  h2 {
-    font-size: 18px;
-  }
-
-  input,
-  select,
-  button,
-  input[type="submit"] {
-    font-size: 16px;
-    padding: 12px;
-  }
-
-  table {
-    font-size: 12px;
-  }
-
-  table th,
-  table td {
-    padding: 6px;
-  }
-
-  a {
-    font-size: 14px;
-    padding: 10px;
-  }
-}
-
